@@ -1,0 +1,27 @@
+version: '3'
+services:
+  xdebug_nginx:
+    image: nginx:1.14-alpine
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./src/public:/var/www/laravel/public
+    ports:
+      - 8010:80
+    links:
+      - xdebug_phpfpm
+    depends_on:
+      - xdebug_phpfpm
+  xdebug_phpfpm:
+    build:
+      context: .
+      dockerfile: ./php/Dockerfile
+    volumes:
+      - ./src:/var/www/laravel
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE=default
+      - DB_USERNAME=root
+      - DB_PASSWORD=12345678
+      - REDIS_HOST=redis
+#      - MAIL_DRIVER=log
+      - DB_TEST_HOST=mysql_test
